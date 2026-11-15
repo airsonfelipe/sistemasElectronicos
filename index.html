@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es-ES">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen y Prácticas: Sistemas y Circuitos Eléctricos</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --success-bg: #ecfdf5;
+            --success-text: #065f46;
+            --success-border: #a7f3d0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 2rem 1rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease;
+        }
+
+        .question-source {
+            display: inline-block;
+            background: #e0e7ff;
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+            display: block;
+        }
+
+        .img-placeholder {
+            background-color: #f9fafb;
+            border: 2px dashed #d1d5db;
+            padding: 2rem;
+            text-align: center;
+            color: #9ca3af;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        textarea.workspace {
+            width: 100%;
+            min-height: 120px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 1.5rem;
+            box-sizing: border-box;
+            background-color: #f9fafb;
+            transition: border-color 0.2s ease;
+        }
+
+        textarea.workspace:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #ffffff;
+        }
+
+        .btn-toggle {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-toggle:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .answer-box {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--success-bg);
+            border: 1px solid var(--success-border);
+            border-radius: 8px;
+            color: var(--success-text);
+            display: none; /* Oculto por defecto */
+        }
+
+        .answer-box.visible {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .answer-box h4 {
+            margin-top: 0;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            color: #047857;
+        }
+
+        table.circuit-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: white;
+        }
+        
+        table.circuit-table th, table.circuit-table td {
+            border: 1px solid var(--success-border);
+            padding: 0.5rem;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Examen de Circuitos Eléctricos</h1>
+        <p class="subtitle">Resuelve los cálculos en el recuadro. Tu progreso se guardará automáticamente en tu navegador.</p>
+    </header>
+
+    <div id="quiz-container"></div>
+</div>
+
+<script>
+    // Base de datos de preguntas extraídas y resueltas de los PDFs
+    const preguntas = [
+        // ================= PDF 1: ACTIVIDAD 1 =================
+        {
+            id: "act1_q1",
+            fuente: "ACTIVIDAD 1",
+            texto: "1. De acuerdo al circuito, ¿cuánta corriente produciría un voltaje aplicado de 10 volts a través de una resistencia de 5 ohms?[cite: 1]",
+            imagen: "img/act1_q1.png",
+            respuesta: "<strong>Solución:</strong><br>Aplicando la Ley de Ohm: <code>I = V / R</code><br>I = 10 V / 5 Ω = <strong>2 A</strong>."
+        },
+        {
+            id: "act1_q2",
+            fuente: "ACTIVIDAD 1",
+            texto: "2. Si el receptor del circuito del diagrama tiene una resistencia de 50 ohms y una corriente de 3A, ¿cuál será el voltaje producido por la fuente?[cite: 1]",
+            imagen: "img/act1_q2.png",
+            respuesta: "<strong>Solución:</strong><br>Aplicando la Ley de Ohm: <code>V = I × R</code><br>V = 3 A × 50 Ω = <strong>150 V</strong>."
+        },
+        {
+            id: "act1_q3",
+            fuente: "ACTIVIDAD 1",
+            texto: "3. Para el siguiente circuito, calcular la corriente aportada por las dos fuentes en serie. (V1 = 50V, V2 = 15V, R1 = 500Ω)[cite: 2]",
+            imagen: "img/act1_q3.png",
+            respuesta: "<strong>Solución:</strong><br>1. Al estar las fuentes en serie, se suman: Vt = 50 V + 15 V = 65 V.<br>2. Aplicamos la Ley de Ohm: <code>I = Vt / R</code><br>I = 65 V / 500 Ω = <strong>0,13 A</strong> (o 130 mA)."
+        },
+        {
+            id: "act1_q4",
+            fuente: "ACTIVIDAD 1",
+            texto: "4. Encontrar las magnitudes en cada parte del circuito paralelo (V = 12V; R1 = 1,5Ω; R2 = 10Ω; R3 = 4,7Ω; R4 = 100Ω). Completa la tabla.[cite: 2]",
+            imagen: "img/act1_q4.png",
+            respuesta: `<strong>Solución:</strong><br>En un circuito en paralelo, el voltaje (U) es el mismo (12V) para todas las ramas. Calculamos I = U/R y P = U×I.<br>
+            <table class="circuit-table">
+                <tr><th>Componente</th><th>U (V)</th><th>I (A)</th><th>R (Ω)</th><th>P (W)</th></tr>
+                <tr><td>R1</td><td>12</td><td>8</td><td>1,5</td><td>96</td></tr>
+                <tr><td>R2</td><td>12</td><td>1,2</td><td>10</td><td>14,4</td></tr>
+                <tr><td>R3</td><td>12</td><td>2,55</td><td>4,7</td><td>30,6</td></tr>
+                <tr><td>R4</td><td>12</td><td>0,12</td><td>100</td><td>1,44</td></tr>
+                <tr><td>Rt</td><td>12</td><td>11,87</td><td>1,01</td><td>142,44</td></tr>
+            </table>`
+        },
+        {
+            id: "act1_q5",
+            fuente: "ACTIVIDAD 1",
+            texto: "5. Encontrar las magnitudes en cada parte del circuito serie (V = 45V; R1 = 5Ω; R2 = 1Ω; R3 = 3Ω). Completa la tabla.[cite: 3]",
+            imagen: "img/act1_q5.png",
+            respuesta: `<strong>Solución:</strong><br>En serie, la resistencia total es la suma y la corriente es la misma para todas.<br>Rt = 5 + 1 + 3 = 9 Ω. <br>It = 45V / 9Ω = 5 A.<br>
+            <table class="circuit-table">
+                <tr><th>Componente</th><th>U (V)</th><th>I (A)</th><th>P (W)</th><th>R (Ω)</th></tr>
+                <tr><td>R1</td><td>25</td><td>5</td><td>125</td><td>5</td></tr>
+                <tr><td>R2</td><td>5</td><td>5</td><td>25</td><td>1</td></tr>
+                <tr><td>R3</td><td>15</td><td>5</td><td>75</td><td>3</td></tr>
+                <tr><td>Rt</td><td>45</td><td>5</td><td>225</td><td>9</td></tr>
+            </table>`
+        },
+        {
+            id: "act1_q6",
+            fuente: "ACTIVIDAD 1",
+            texto: "6. En el siguiente circuito mixto: V=230V; R1=330Ω, R2=1kΩ, R3=200Ω, R4=30Ω, R5=20Ω. a) Dibuja el circuito equivalente y calcula la Rt. b) Intensidad total. c) Valores de tensión, intensidad y potencia en cada resistencia.[cite: 3, 4]",
+            imagen: "img/act1_q6.png",
+            respuesta: `<strong>Solución:</strong><br>
+            <strong>a) Resistencia Total:</strong><br>
+            - R4 y R5 en serie = 30 + 20 = 50 Ω.<br>
+            - R3 en serie con R4,5 = 200 + 50 = 250 Ω (Rama derecha).<br>
+            - R2 (1000Ω) en paralelo con Rama derecha (250Ω): Rp = (1000 × 250) / (1250) = 200 Ω.<br>
+            - Rt = R1 + Rp = 330 + 200 = <strong>530 Ω</strong>.<br><br>
+            <strong>b) Intensidad Total:</strong> It = 230 V / 530 Ω ≈ <strong>0,434 A (434 mA)</strong>.<br><br>
+            <strong>c) Magnitudes individuales:</strong><br>
+            - <strong>R1:</strong> I = 0,434 A | V = 330 × 0,434 = 143,22 V | P = 62,15 W.<br>
+            - <em>Voltaje en el nodo paralelo:</em> 230 - 143,22 = 86,78 V.<br>
+            - <strong>R2:</strong> V = 86,78 V | I = 86,78 / 1000 = 0,0867 A | P = 7,53 W.<br>
+            - <em>Corriente rama derecha:</em> 86,78 / 250 = 0,347 A.<br>
+            - <strong>R3:</strong> I = 0,347 A | V = 0,347 × 200 = 69,4 V | P = 24,1 W.<br>
+            - <strong>R4:</strong> I = 0,347 A | V = 0,347 × 30 = 10,41 V | P = 3,61 W.<br>
+            - <strong>R5:</strong> I = 0,347 A | V = 0,347 × 20 = 6,94 V | P = 2,41 W.`
+        },
+
+        // ================= PDF 2: EJERCICIOS DE CONTINUA =================
+        {
+            id: "cont_q1",
+            fuente: "EJERCICIOS CONTINUA",
+            texto: "1. Calcula la Resistencia de un conductor de cobre de 2,5 mm² y 450 metros de longitud. (ρ_cU = 0,0172 Ω mm²/m)[cite: 5]",
+            imagen: null,
+            respuesta: "<strong>Solución:</strong><br>Fórmula: <code>R = ρ × (L / S)</code><br>R = 0,0172 × (450 / 2,5) = <strong>3,096 Ω</strong>."
+        },
+        {
+            id: "cont_q5",
+            fuente: "EJERCICIOS CONTINUA",
+            texto: "5. Calcula la resistencia de un conductor de cobre a 70°C, si sabemos que a 20°C tiene una resistencia de 5 Ω. (α_cU = 0,00393).[cite: 5]",
+            imagen: null,
+            respuesta: "<strong>Solución:</strong><br>Fórmula por variación de temperatura: <code>Rf = Ri × [1 + α × (Tf - Ti)]</code><br>R_70 = 5 × [1 + 0,00393 × (70 - 20)]<br>R_70 = 5 × [1 + (0,00393 × 50)] = 5 × 1,1965 = <strong>5,98 Ω</strong>."
+        },
+        {
+            id: "cont_q13",
+            fuente: "EJERCICIOS CONTINUA",
+            texto: "13. Calcula la energía calorífica (Q) consumida por un calentador eléctrico de agua en 1 hora y 30 minutos, si sabemos que tiene una resistencia de 40 Ω y se conecta a la tensión de red de 230 V.[cite: 5]",
+            imagen: null,
+            respuesta: "<strong>Solución:</strong><br>1. Calculamos la Potencia: <code>P = V² / R</code> = 230² / 40 = 52900 / 40 = 1322,5 W.<br>2. Convertimos el tiempo a segundos: t = 90 min × 60 s = 5400 s.<br>3. Energía en Julios: Q = P × t = 1322,5 × 5400 = <strong>7.141.500 Julios (7.141,5 kJ)</strong>."
+        },
+
+        // ================= PDF 3 & 4: EJERCICIOS DE REPASO =================
+        {
+            id: "rep1_q312",
+            fuente: "REPASO CONTINUA 1",
+            texto: "Ejercicio 3.1.2: Calcular el voltaje que proporciona la fuente para que exista una corriente de 6 amperes que fluye por todo el circuito. (El circuito tiene dos ramas mixtas con paralelo de 1kΩ y 500Ω, y otra de 3kΩ / 3).[cite: 15]",
+            imagen: "img/rep1_312.png",
+            respuesta: "<strong>Solución:</strong><br>1. Calculamos R equivalente derecha: <code>(1k × 1k) / (1k + 1k) = 500 Ω</code>.<br>2. Calculamos R equivalente izquierda (tres de 3kΩ): <code>3kΩ / 3 = 1kΩ</code>.<br>3. Estas dos ramas equivalentes quedan en paralelo con la fuente: <code>Rt = (1000 × 500) / (1000 + 500) = 333,33 Ω</code>.<br>4. Voltaje de la fuente: V = Rt × It = 333,33 Ω × 6 A = <strong>1999,98 V ≈ 2 kV</strong>."
+        },
+        {
+            id: "rep2_q1",
+            fuente: "REPASO CONTINUA 2",
+            texto: "1. Resuelve el siguiente circuito (Serie) y calcula: Rtotal; Itotal; V_AB; V_BC; V_CD; Ptotal; P1; P2; P3. Datos: V_T = 48V; R1 = 5Ω; R2 = 7Ω; R3 = 10Ω.[cite: 23, 24]",
+            imagen: "img/rep2_q1.png",
+            respuesta: "<strong>Solución:</strong><br>R_T = 5 + 7 + 10 = <strong>22 Ω</strong><br>I_T = 48 / 22 = <strong>2,18 A</strong><br>V_AB = 2,18 × 5 = <strong>10,9 V</strong><br>V_BC = 2,18 × 7 = <strong>15,26 V</strong><br>V_CD = 2,18 × 10 = <strong>21,8 V</strong><br>P_T = 48 × 2,18 = <strong>104,64 W</strong><br>P1 = 10,9 × 2,18 = <strong>23,76 W</strong><br>P2 = 15,26 × 2,18 = <strong>33,27 W</strong><br>P3 = 21,8 × 2,18 = <strong>47,52 W</strong>."
+        }
+    ];
+
+    const container = document.getElementById('quiz-container');
+
+    // Función para renderizar las preguntas
+    preguntas.forEach((q, index) => {
+        // Recuperar notas guardadas en localStorage
+        const savedNotes = localStorage.getItem(`notes_${q.id}`) || '';
+
+        // Construir la etiqueta de imagen o el placeholder si no hay imagen definida
+        let imageHTML = '';
+        if (q.imagen) {
+            imageHTML = `<img src="${q.imagen}" alt="Circuito para la pregunta ${index + 1}" class="question-image" onerror="this.outerHTML='<div class=\\'img-placeholder\\'>Falta la imagen: Guarda tu recorte como <b>${q.imagen}</b> en tu repositorio.</div>'">`;
+        }
+
+        const cardHTML = `
+            <div class="question-card">
+                <span class="question-source">${q.fuente}</span>
+                <div class="question-text">${q.texto}</div>
+                ${imageHTML}
+                
+                <textarea class="workspace" id="workspace_${q.id}" placeholder="Escribe aquí tus cálculos y resultados... (se guardan automáticamente)">${savedNotes}</textarea>
+                
+                <button class="btn-toggle" onclick="toggleAnswer('${q.id}')" id="btn_${q.id}">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    Ver Respuesta
+                </button>
+                
+                <div class="answer-box" id="answer_${q.id}">
+                    <h4>Respuesta Correcta:</h4>
+                    <div>${q.respuesta}</div>
+                </div>
+            </div>
+        `;
+        
+        container.insertAdjacentHTML('beforeend', cardHTML);
+
+        // Event listener para auto-guardar las notas
+        const textarea = document.getElementById(`workspace_${q.id}`);
+        textarea.addEventListener('input', (e) => {
+            localStorage.setItem(`notes_${q.id}`, e.target.value);
+        });
+    });
+
+    // Función para mostrar/ocultar las respuestas
+    function toggleAnswer(id) {
+        const answerBox = document.getElementById(`answer_${id}`);
+        const btn = document.getElementById(`btn_${id}`);
+        
+        if (answerBox.classList.contains('visible')) {
+            answerBox.classList.remove('visible');
+            btn.innerHTML = `<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Ver Respuesta`;
+        } else {
+            answerBox.classList.add('visible');
+            btn.innerHTML = `<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg> Ocultar Respuesta`;
+        }
+    }
+</script>
+
+</body>
+</html>
